@@ -12,8 +12,17 @@ impl Game {
         ];
         Game{board: board, is_over: false}
     }
+
+    fn print_board(&self) {
+        for i in 0..3 {
+            println!("+---+---+---+");
+            println!("| {} | {} | {} |", self.board[i][0], self.board[i][1], self.board[i][2]);
+        }
+        println!("+---+---+---+");
+    }
 }
 
 fn main() {
     let game = Game::new();
+    game.print_board();
 }
