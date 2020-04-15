@@ -1,22 +1,34 @@
 struct Game {
-    board: [[u8;3];3],
-    is_over: bool
+    board: [[i8; 3]; 3],
+    is_over: bool,
 }
 
 impl Game {
     fn new() -> Game {
-        let board = [
-            [0u8;3],
-            [0u8;3],
-            [0u8;3]
-        ];
-        Game{board: board, is_over: false}
+        let board = [[0i8; 3], [1i8; 3], [-1i8; 3]];
+        Game {
+            board: board,
+            is_over: false,
+        }
     }
 
     fn print_board(&self) {
         for i in 0..3 {
             println!("+---+---+---+");
-            println!("| {} | {} | {} |", self.board[i][0], self.board[i][1], self.board[i][2]);
+            for j in 0..3 {
+                print!(
+                    "| {} ",
+                    if self.board[i][j] == 0 {
+                        " "
+                    } else if self.board[i][j] == 1 {
+                        "X"
+                    } else {
+                        "O"
+                    }
+                )
+            }
+            print!("|");
+            println!("");
         }
         println!("+---+---+---+");
     }
