@@ -4,6 +4,7 @@ use std::io;
 struct Game {
     board: [[i8; 3]; 3],
     is_over: bool,
+    winner: i8,
 }
 
 impl Game {
@@ -12,6 +13,7 @@ impl Game {
         Game {
             board: board,
             is_over: false,
+            winner: 0,
         }
     }
 
@@ -49,17 +51,52 @@ impl Game {
 
     fn play(&mut self, row: usize, col: usize) {
         self.board[row][col] = 1;
+        if self.check_winning_board() == 1 {
+            self.is_over = true;
+            self.winner = 1;
+            return;
+        }
         loop {
             let [rand_row, rand_col] = [
                 rand::thread_rng().gen_range(0, 3),
                 rand::thread_rng().gen_range(0, 3),
             ];
             match self.is_ocuppied(rand_row, rand_col) {
-                Ok(value) => if value {continue}
+                Ok(value) => {
+                    if value {
+                        continue;
+                    }
+                }
                 Err(_) => continue,
             }
             self.board[rand_row][rand_col] = -1;
+            if self.check_winning_board() == -1 {
+                self.is_over = true;
+                self.winner = 1;
+            }
             return;
+        }
+    }
+
+    fn check_winning_board(&mut self) -> i8 {
+        let mut sum_row = 0;
+        let mut sum_col = 0;
+        let sum_diag = self.board[0][0] + self.board[1][1] + self.board[2][2];
+        for i in 0..3 {
+            for j in 0..3 {
+                if sum_col == 3 || sum_row == 3 || sum_col == -3 || sum_row == -3 {
+                    break;
+                }
+                sum_row += self.board[i][j];
+                sum_col += self.board[j][i];
+            }
+        }
+        if sum_row == 3 || sum_col == 3 || sum_diag == 3 {
+            1
+        } else if sum_row == -3 || sum_col == -3 || sum_diag == -3{
+            -1
+        } else {
+            0
         }
     }
 }
@@ -71,6 +108,11 @@ fn main() {
         let [row, col] = get_play(&game);
         game.play(row as usize, col as usize);
     }
+    game.print_board();
+    println!(
+        "the winner is: {}",
+        if game.winner == 1 { "X" } else { "O" }
+    );
 }
 
 fn get_play(game: &Game) -> [u8; 2] {
