@@ -35,14 +35,14 @@ impl Game {
         println!("+---+---+---+");
     }
 
-    fn is_ocuppied(&self, row: usize, col: usize) -> bool {
+    fn is_ocuppied(&self, row: usize, col: usize) -> Result<bool,String> {
         if self.board.len() < row || self.board[row].len() < col {
-            return true;
+            return Err(String::from("The indexes are out of bounds"));
         }
         if self.board[row][col] != 0 {
-            true
+            Ok(true)
         } else {
-            false
+            Ok(false)
         }
     }
 
@@ -63,8 +63,14 @@ fn main() {
 fn get_play(game: &Game) -> [u8; 2] {
     loop {
         let [row, col] = get_validated_input();
-        if !game.is_ocuppied(row as usize, col as usize) {
-            return [row, col];
+        match game.is_ocuppied(row as usize, col as usize) {
+            Ok(value) => {
+                if !value {return [row,col];}
+            }
+            Err(err) => {
+                println!("{}", err);
+                continue;
+            }
         }
         println!("the box specified has already been played");
     }
@@ -88,7 +94,7 @@ fn get_validated_input() -> [u8; 2] {
         }
         let mut parsed_input: [u8; 2] = [0, 0];
         let mut is_parse_completed = false;
-        // Parses input from &str to u8
+        // Parses input from &str to uf8
         for i in 0..2 {
             match splitted_input.get_mut(i).unwrap().parse::<u8>() {
                 Ok(num) => {
