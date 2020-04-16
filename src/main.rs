@@ -1,3 +1,4 @@
+use rand::Rng;
 use std::io;
 
 struct Game {
@@ -35,7 +36,7 @@ impl Game {
         println!("+---+---+---+");
     }
 
-    fn is_ocuppied(&self, row: usize, col: usize) -> Result<bool,String> {
+    fn is_ocuppied(&self, row: usize, col: usize) -> Result<bool, String> {
         if self.board.len() < row || self.board[row].len() < col {
             return Err(String::from("The indexes are out of bounds"));
         }
@@ -48,6 +49,18 @@ impl Game {
 
     fn play(&mut self, row: usize, col: usize) {
         self.board[row][col] = 1;
+        loop {
+            let [rand_row, rand_col] = [
+                rand::thread_rng().gen_range(0, 3),
+                rand::thread_rng().gen_range(0, 3),
+            ];
+            match self.is_ocuppied(rand_row, rand_col) {
+                Ok(value) => if value {continue}
+                Err(_) => continue,
+            }
+            self.board[rand_row][rand_col] = -1;
+            return;
+        }
     }
 }
 
@@ -65,7 +78,9 @@ fn get_play(game: &Game) -> [u8; 2] {
         let [row, col] = get_validated_input();
         match game.is_ocuppied(row as usize, col as usize) {
             Ok(value) => {
-                if !value {return [row,col];}
+                if !value {
+                    return [row, col];
+                }
             }
             Err(err) => {
                 println!("{}", err);
