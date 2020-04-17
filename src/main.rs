@@ -1,3 +1,4 @@
+use colored::*;
 use rand::Rng;
 use std::io;
 
@@ -24,11 +25,11 @@ impl Game {
                 print!(
                     "| {} ",
                     if self.board[i][j] == 0 {
-                        " "
+                        " ".white()
                     } else if self.board[i][j] == 1 {
-                        "X"
+                        "X".blue()
                     } else {
-                        "O"
+                        "O".red()
                     }
                 )
             }
@@ -93,7 +94,7 @@ impl Game {
         }
         if sum_row == 3 || sum_col == 3 || sum_diag == 3 {
             1
-        } else if sum_row == -3 || sum_col == -3 || sum_diag == -3{
+        } else if sum_row == -3 || sum_col == -3 || sum_diag == -3 {
             -1
         } else {
             0
